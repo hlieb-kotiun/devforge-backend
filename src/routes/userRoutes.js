@@ -8,6 +8,7 @@ import {
   addArticleToSavedArticles,
   deleteArticleFromSavedArticles,
   updateUserAvatar,
+  getTopCreators,
 } from '../controllers/userController.js';
 
 import {
@@ -22,8 +23,10 @@ import { upload } from '../middleware/upload.js';
 const router = Router();
 
 router.get('/users', celebrate(getUsersSchema), getUsers);
+router.get('/users/top-creators', getTopCreators);
 router.get('/users/:id', celebrate(getUserByIdSchema), getUserById);
 router.get('/saved-articles', authenticate, getSavedArticles);
+
 router.post(
   '/saved-articles/:id',
   authenticate,

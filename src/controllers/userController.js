@@ -103,7 +103,7 @@ export const updateUserAvatar = async (req, res) => {
 
   const updatedUser = await User.findByIdAndUpdate(
     { _id: userId },
-    { avatar: avatarUrl },
+    { avatarUrl },
     { new: true, select: '-password -token' },
   );
 
@@ -112,4 +112,20 @@ export const updateUserAvatar = async (req, res) => {
   }
 
   res.status(200).json(updatedUser);
+};
+
+export const getTopCreators = async (req, res) => {
+  const creators = await User.find({
+    articlesAmount: { $gt: 0 },
+  })
+    .sort({
+      articlesAmount: -1,
+      _id: 1,
+    })
+    .limit(6)
+    .select('_id username name avatarUrl articlesAmount');
+
+  res.status(200).json({
+    creators,
+  });
 };

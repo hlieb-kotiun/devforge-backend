@@ -1,5 +1,6 @@
 import createHttpError from 'http-errors';
 import { Article } from '../models/article.js';
+import { User } from '../models/user.js';
 
 export const getArticlesController = async (req, res) => {
   const { page, limit, filter } = req.query;
@@ -78,6 +79,11 @@ export const createArticle = async (req, res) => {
   if (!newArticle) {
     throw createHttpError();
   }
+
+  await User.findByIdAndUpdate(ownerId, {
+    $inc: { articlesAmount: 1 },
+  });
+
   res.status(201).json(newArticle);
 };
 
@@ -96,6 +102,16 @@ export const deleteArticle = async (req, res) => {
   }
 
   await Article.findByIdAndDelete(id);
+
+  await User.updateOne(
+    {
+      _id: article.ownerId,
+      articlesAmount: { $gt: 0 },
+    },
+    {
+      $inc: { articlesAmount: -1 },
+    },
+  );
 
   res.status(200).json({ message: 'Article deleted successfully' });
 };
