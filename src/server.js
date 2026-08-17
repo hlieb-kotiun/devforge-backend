@@ -12,9 +12,16 @@ import { errors } from 'celebrate';
 import cookieParser from 'cookie-parser';
 const app = express();
 const PORT = process.env.PORT ?? 3000;
+const FRONTEND_URL = process.env.FRONTEND_URL ?? 'http://localhost:3001';
 
 app.use(express.json());
-app.use(cors());
+app.use('/uploads', express.static('uploads'));
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
+  }),
+);
 app.use(logger);
 app.use(cookieParser());
 

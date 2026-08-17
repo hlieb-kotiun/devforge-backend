@@ -17,13 +17,9 @@ import {
   deleteArticleSchema,
 } from '../validations/articlesValidation.js';
 import { authenticate } from '../middleware/authenticate.js';
-import multer from 'multer';
+import { upload as memoryUpload } from '../middleware/upload.js';
 
 const router = Router();
-const upload = multer({
-  dest: 'uploads/',
-  limits: { fileSize: 1024 * 1024 }, // максимум 1Mb
-});
 
 router.get('/articles', celebrate(getArticlesSchema), getArticlesController);
 
@@ -36,7 +32,7 @@ router.get(
 router.post(
   '/articles',
   authenticate,
-  upload.single('image'),
+  memoryUpload.single('img'),
   celebrate(createArticlesSchema),
   createArticle,
 );

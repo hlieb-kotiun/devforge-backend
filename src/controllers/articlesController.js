@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors';
 import { Article } from '../models/article.js';
 import { User } from '../models/user.js';
+import { uploadToCloudinary } from '../services/cloudinaryService.js';
 
 export const getArticlesController = async (req, res) => {
   const { page, limit, filter } = req.query;
@@ -64,8 +65,14 @@ export const getArticleByIdController = async (req, res) => {
 };
 
 export const createArticle = async (req, res) => {
-  const { title, desc, img, date, author } = req.body;
+  const { title, desc, date, author } = req.body;
   const ownerId = req.user._id;
+
+  if (!req.file) {
+    throw createHttpError(400, 'Image is required');
+  }
+
+  const img = await uploadToCloudinary(req.file.buffer, 'harmoniq/articles');
 
   const newArticle = await Article.create({
     title,
