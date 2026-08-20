@@ -141,7 +141,11 @@ export const updateArticle = async (req, res) => {
   const updateData = { ...req.body };
 
   if (req.file) {
-    updateData.img = await uploadToCloudinary(req.file.buffer);
+    console.log('Uploading image to Cloudinary...');
+    updateData.img = await uploadToCloudinary(
+      req.file.buffer,
+      'harmoniq/articles',
+    );
   }
 
   const updatedArticle = await Article.findByIdAndUpdate(id, updateData, {

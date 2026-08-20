@@ -6,17 +6,22 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const uploadToCloudinary = (fileBuffer, folder = 'harmoniq/avatars') => {
+export const uploadToCloudinary = (
+  fileBuffer,
+  folder = 'harmoniq/articles',
+  options = {},
+) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder,
-        transformation: [
-          { width: 300, height: 300, crop: 'fill', gravity: 'face' },
-        ],
+        ...options,
       },
       (error, result) => {
-        if (error) return reject(error);
+        if (error) {
+          console.error('Cloudinary upload error:', error);
+          return reject(error);
+        }
         resolve(result.secure_url);
       },
     );
