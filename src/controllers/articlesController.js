@@ -128,6 +128,10 @@ export const updateArticle = async (req, res) => {
   const { id } = req.params;
   const { _id: userId } = req.user;
 
+  console.log('--- UPDATE ARTICLE DEBUG ---');
+  console.log('req.body:', req.body);
+  console.log('req.file:', req.file);
+
   const article = await Article.findById(id);
 
   if (!article) {
@@ -146,11 +150,14 @@ export const updateArticle = async (req, res) => {
       req.file.buffer,
       'harmoniq/articles',
     );
+    console.log('New Cloudinary URL:', updateData.img);
   }
 
   const updatedArticle = await Article.findByIdAndUpdate(id, updateData, {
     new: true,
   });
+
+  console.log('Updated DB Document:', updatedArticle);
 
   res.status(200).json(updatedArticle);
 };
